@@ -1,0 +1,475 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Mon foyer",
+    "description": "Mon foyer's API definitions",
+    "version": "1.0.0"
+  },
+  "externalDocs": {
+    "description": "Mon foyer's Wiki",
+    "url": "https://github.com/Mon-foyer/mon-foyer/wiki"
+  },
+  "tags": [
+    {
+      "name": "Auth",
+      "description": "Authentication"
+    },
+    {
+      "name": "Home"
+    },
+    {
+      "name": "Invite",
+      "description": "Invitation to join a home"
+    },
+    {
+      "name": "User"
+    }
+  ],
+  "paths": {
+    "/auth/login": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Login",
+        "description": "User login",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "name": {
+                    "$ref": "#/components/schemas/Name"
+                  },
+                  "password": {
+                    "$ref": "#/components/schemas/Password"
+                  }
+                },
+                "required": [
+                  "name",
+                  "password"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Authentication token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/home": {
+      "post": {
+        "tags": [
+          "Home"
+        ],
+        "summary": "Creates a new home",
+        "description": "Creates a new home for a user",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "name": {
+                    "$ref": "#/components/schemas/Name"
+                  }
+                },
+                "required": [
+                  "name"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/LocationHeader"
+          }
+        }
+      }
+    },
+    "/home/{id}": {
+      "get": {
+        "tags": [
+          "Home"
+        ],
+        "summary": "Gets a home",
+        "description": "Gets a home by its id",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A home and its inhabitants",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_id": {
+                      "$ref": "#/components/schemas/_Id"
+                    },
+                    "inhabitants": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "_id": {
+                            "$ref": "#/components/schemas/UserId"
+                          },
+                          "name": {
+                            "$ref": "#/components/schemas/Name"
+                          }
+                        }
+                      }
+                    },
+                    "name": {
+                      "$ref": "#/components/schemas/Name"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The user is not an inhabitant of the home"
+          },
+          "404": {
+            "description": "The resource does not exists"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Home"
+        ],
+        "summary": "Deletes a home",
+        "description": "Deletes a home by its id and all its related data",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The home has been successfully deleted"
+          },
+          "403": {
+            "description": "The home does not belong to the user"
+          }
+        }
+      }
+    },
+    "/invite": {
+      "post": {
+        "tags": [
+          "Invite"
+        ],
+        "summary": "Creates a new invitation",
+        "description": "Sends a new proposal to join a home to a user",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Name of the user to invite"
+                  }
+                },
+                "required": [
+                  "name"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/LocationHeader"
+          },
+          "409": {
+            "description": "The invitation could not be created because the target user is already part of a home"
+          }
+        }
+      }
+    },
+    "/invite/{id}": {
+      "delete": {
+        "tags": [
+          "Invite"
+        ],
+        "summary": "Deletes an invitation",
+        "description": "Deletes an invitation by its id",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The invitation has been successfully deleted"
+          },
+          "403": {
+            "description": "The invitation does not come from or has not been sent to the user"
+          },
+          "404": {
+            "description": "The resource does not exists"
+          }
+        }
+      }
+    },
+    "/invite/{id}/accept": {
+      "delete": {
+        "tags": [
+          "Invite"
+        ],
+        "summary": "Accepts an invitation",
+        "description": "Adds the target user to the home of the source user.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The invitation has been successfully accepted"
+          },
+          "403": {
+            "description": "The invitation does not target the user"
+          },
+          "404": {
+            "description": "The resource does not exists"
+          }
+        }
+      }
+    },
+    "/invite/pendings": {
+      "get": {
+        "tags": [
+          "Invite"
+        ],
+        "summary": "Get a user pending invites",
+        "responses": {
+          "200": {
+            "description": "Pending invites",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "maxItems": 2,
+                  "minItems": 0,
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "_id": {
+                        "$ref": "#/components/schemas/_Id"
+                      },
+                      "sentTo": {
+                        "type": "string",
+                        "description": "Username of the user to which the invitation has been sent"
+                      },
+                      "sentFrom": {
+                        "type": "string",
+                        "description": "Username of the user from which the invitation comes from"
+                      }
+                    },
+                    "required": [
+                      "_id",
+                      "sentTo",
+                      "sentFrom"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Registers a new user",
+        "description": "Creates a new user from just a username and a password",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "name": {
+                    "$ref": "#/components/schemas/Name"
+                  },
+                  "password": {
+                    "$ref": "#/components/schemas/Password"
+                  }
+                },
+                "required": [
+                  "name",
+                  "password"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/LocationHeader"
+          },
+          "409": {
+            "description": "A user with this login already exists"
+          }
+        }
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Get a user",
+        "description": "Get a user from its id",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_id": {
+                      "$ref": "#/components/schemas/_Id"
+                    },
+                    "homeId": {
+                      "$ref": "#/components/schemas/HomeId"
+                    },
+                    "name": {
+                      "$ref": "#/components/schemas/Name"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "parameters": {
+      "id": {
+        "in": "path",
+        "name": "id",
+        "schema": {
+          "$ref": "#/components/schemas/_Id"
+        },
+        "required": true
+      }
+    },
+    "responses": {
+      "LocationHeader": {
+        "description": "The resource has been created",
+        "headers": {
+          "Location": {
+            "schema": {
+              "type": "string"
+            },
+            "description": "URL at which the resource can be found"
+          }
+        }
+      }
+    },
+    "schemas": {
+      "_Id": {
+        "type": "string",
+        "format": "objectId",
+        "description": "Resource unique identifier"
+      },
+      "Home": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "$ref": "#/components/schemas/HomeId"
+          },
+          "inhabitants": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 2,
+            "items": {
+              "$ref": "#/components/schemas/UserId"
+            }
+          },
+          "name": {
+            "$ref": "#/components/schemas/Name"
+          }
+        }
+      },
+      "HomeId": {
+        "type": "string",
+        "format": "objectId",
+        "description": "Home Id"
+      },
+      "Name": {
+        "type": "string",
+        "description": "Resource custom name"
+      },
+      "Password": {
+        "type": "string",
+        "description": "Encrypted password"
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "$ref": "#/components/schemas/_Id"
+          },
+          "homeId": {
+            "$ref": "#/components/schemas/HomeId"
+          },
+          "name": {
+            "$ref": "#/components/schemas/Name"
+          },
+          "password": {
+            "$ref": "#/components/schemas/Password"
+          },
+          "token": {
+            "type": "string",
+            "description": "Token"
+          }
+        }
+      },
+      "UserId": {
+        "type": "string",
+        "format": "objectId",
+        "description": "User Id"
+      }
+    },
+    "securitySchemes": null
+  }
+}
