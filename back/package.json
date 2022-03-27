@@ -1,0 +1,22 @@
+{
+  "name": "mon-foyer",
+  "version": "1.0.0",
+  "description": "Mon Foyer's API",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mon-foyer/mon-foyer.git"
+  },
+  "author": "Jérémy Pouyet",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Mon-foyer/mon-foyer/issues"
+  },
+  "homepage": "https://github.com/Mon-foyer/mon-foyer#readme",
+  "dependencies": {
+    "express": "5.0.0-beta.1"
+  }
+}
