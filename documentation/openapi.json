@@ -33,6 +33,11 @@
         ],
         "summary": "Login",
         "description": "User login",
+        "security": [
+          {
+            "BasicAuth": []
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -68,6 +73,9 @@
                 }
               }
             }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
           }
         }
       }
@@ -79,6 +87,11 @@
         ],
         "summary": "Creates a new home",
         "description": "Creates a new home for a user",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -98,6 +111,9 @@
         "responses": {
           "201": {
             "$ref": "#/components/responses/LocationHeader"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
           }
         }
       }
@@ -109,6 +125,11 @@
         ],
         "summary": "Gets a home",
         "description": "Gets a home by its id",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "$ref": "#/components/parameters/id"
@@ -147,11 +168,14 @@
               }
             }
           },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
           "403": {
             "description": "The user is not an inhabitant of the home"
           },
           "404": {
-            "description": "The resource does not exists"
+            "$ref": "#/components/responses/NotFound"
           }
         }
       },
@@ -161,17 +185,28 @@
         ],
         "summary": "Deletes a home",
         "description": "Deletes a home by its id and all its related data",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "$ref": "#/components/parameters/id"
           }
         ],
         "responses": {
-          "200": {
+          "204": {
             "description": "The home has been successfully deleted"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
           },
           "403": {
             "description": "The home does not belong to the user"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
           }
         }
       }
@@ -183,6 +218,11 @@
         ],
         "summary": "Creates a new invitation",
         "description": "Sends a new proposal to join a home to a user",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -204,8 +244,11 @@
           "201": {
             "$ref": "#/components/responses/LocationHeader"
           },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
           "409": {
-            "description": "The invitation could not be created because the target user is already part of a home"
+            "description": "The invitation could not be created because the target user is already part of a home Or Unable to create an invitation as you've already invited one person"
           }
         }
       }
@@ -217,6 +260,11 @@
         ],
         "summary": "Deletes an invitation",
         "description": "Deletes an invitation by its id",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "$ref": "#/components/parameters/id"
@@ -226,11 +274,14 @@
           "200": {
             "description": "The invitation has been successfully deleted"
           },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
           "403": {
             "description": "The invitation does not come from or has not been sent to the user"
           },
           "404": {
-            "description": "The resource does not exists"
+            "$ref": "#/components/responses/NotFound"
           }
         }
       }
@@ -242,6 +293,11 @@
         ],
         "summary": "Accepts an invitation",
         "description": "Adds the target user to the home of the source user.",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "$ref": "#/components/parameters/id"
@@ -251,11 +307,14 @@
           "200": {
             "description": "The invitation has been successfully accepted"
           },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
           "403": {
             "description": "The invitation does not target the user"
           },
           "404": {
-            "description": "The resource does not exists"
+            "$ref": "#/components/responses/NotFound"
           }
         }
       }
@@ -265,7 +324,13 @@
         "tags": [
           "Invite"
         ],
-        "summary": "Get a user pending invites",
+        "summary": "Gets a user pending invites",
+        "description": "Retrieves the list of invites not yet approved nor deleted",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "responses": {
           "200": {
             "description": "Pending invites",
@@ -299,11 +364,14 @@
                 }
               }
             }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
           }
         }
       }
     },
-    "/users": {
+    "/user": {
       "post": {
         "tags": [
           "User"
@@ -336,17 +404,32 @@
           },
           "409": {
             "description": "A user with this login already exists"
+          },
+          "422": {
+            "description": "password_too_weak: the submitted password does not meet security requirements",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         }
       }
     },
-    "/users/{id}": {
+    "/user/{id}": {
       "get": {
         "tags": [
           "User"
         ],
-        "summary": "Get a user",
-        "description": "Get a user from its id",
+        "summary": "Gets a user",
+        "description": "Gets a user by its id",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "$ref": "#/components/parameters/id"
@@ -363,19 +446,31 @@
                     "_id": {
                       "$ref": "#/components/schemas/_Id"
                     },
+                    "createdAt": {
+                      "$ref": "#/components/schemas/CreatedAt"
+                    },
                     "homeId": {
                       "$ref": "#/components/schemas/HomeId"
                     },
                     "name": {
                       "$ref": "#/components/schemas/Name"
+                    },
+                    "updatedAt": {
+                      "$ref": "#/components/schemas/UpdatedAt"
                     }
                   }
                 }
               }
             }
           },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
           "404": {
-            "description": "User not found"
+            "$ref": "#/components/responses/NotFound"
           }
         }
       }
@@ -393,6 +488,20 @@
       }
     },
     "responses": {
+      "Forbidden": {
+        "description": "The user does not have the rights to access to this resource",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "example": {
+                "status": 404,
+                "message": "NotFound"
+              }
+            }
+          }
+        }
+      },
       "LocationHeader": {
         "description": "The resource has been created",
         "headers": {
@@ -403,6 +512,34 @@
             "description": "URL at which the resource can be found"
           }
         }
+      },
+      "NotFound": {
+        "description": "Resource not found",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "example": {
+                "status": 404,
+                "message": "NotFound"
+              }
+            }
+          }
+        }
+      },
+      "Unauthorized": {
+        "description": "Unauthorized",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "example": {
+                "status": 401,
+                "message": "Unauthorized"
+              }
+            }
+          }
+        }
       }
     },
     "schemas": {
@@ -411,11 +548,32 @@
         "format": "objectId",
         "description": "Resource unique identifier"
       },
+      "CreatedAt": {
+        "type": "string",
+        "format": "date",
+        "description": "Resource creation date"
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "short string describing the error to use as translation key",
+            "example": "password_too_weak"
+          },
+          "status": {
+            "$ref": "#/components/schemas/HttpError"
+          }
+        }
+      },
       "Home": {
         "type": "object",
         "properties": {
           "_id": {
             "$ref": "#/components/schemas/HomeId"
+          },
+          "createdAt": {
+            "$ref": "#/components/schemas/CreatedAt"
           },
           "inhabitants": {
             "type": "array",
@@ -427,6 +585,9 @@
           },
           "name": {
             "$ref": "#/components/schemas/Name"
+          },
+          "updatedAt": {
+            "$ref": "#/components/schemas/UpdatedAt"
           }
         }
       },
@@ -434,6 +595,12 @@
         "type": "string",
         "format": "objectId",
         "description": "Home Id"
+      },
+      "HttpError": {
+        "type": "integer",
+        "minimum": 400,
+        "maximum": 599,
+        "description": "Http response status code"
       },
       "Name": {
         "type": "string",
@@ -443,11 +610,19 @@
         "type": "string",
         "description": "Encrypted password"
       },
+      "UpdatedAt": {
+        "type": "string",
+        "format": "date",
+        "description": "Last resource update date"
+      },
       "User": {
         "type": "object",
         "properties": {
           "_id": {
             "$ref": "#/components/schemas/_Id"
+          },
+          "createdAt": {
+            "$ref": "#/components/schemas/CreatedAt"
           },
           "homeId": {
             "$ref": "#/components/schemas/HomeId"
@@ -460,7 +635,10 @@
           },
           "token": {
             "type": "string",
-            "description": "Token"
+            "description": "Bearer token"
+          },
+          "updatedAt": {
+            "$ref": "#/components/schemas/UpdatedAt"
           }
         }
       },
@@ -470,6 +648,15 @@
         "description": "User Id"
       }
     },
-    "securitySchemes": null
+    "securitySchemes": {
+      "BasicAuth": {
+        "type": "http",
+        "scheme": "basic"
+      },
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
   }
 }
