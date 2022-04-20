@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import G from '../../generators.mjs'
-import { Invitation } from '../../models.mjs'
+import { Invitation, ObjectId } from '../../models.mjs'
 
 describe('DELETE /invitation/:id', () => {
   after(() => G.empty())
@@ -22,6 +22,24 @@ describe('DELETE /invitation/:id', () => {
   })
 
   describe('Failure', () => {
+    it('Returns 404 when a user tries to delete the invitation of someone else', async() => {
+      const [inviter, invitee, someone] = await Promise.all([G.newUser(), G.newUser(), G.newUser()])
+      const invitation = await G.newInvitation({ fromId: inviter._id, toId: invitee._id })
+      await G.request(`delete /invitation/${invitation._id}`, someone).expect(404)
+      expect(await Invitation.findOne({ _id: invitation._id }).lean()).not.null
+    })
+
+    it('Returns 404 when the invitation does not exists', async() => {
+      const user = await G.newUser()
+
+      await G.request(`delete /invitation/${new ObjectId()}`, user).expect(404)
+    })
+
+    it('Returns 400 when the id is invalid', async() => {
+      const user = await G.newUser()
+
+      await G.request(`delete /invitation/zporf`, user).expect(400)
+    })
   })
 
 })
