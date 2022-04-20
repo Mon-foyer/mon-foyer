@@ -8,21 +8,25 @@ import { Invitation, User } from '../../models.mjs'
 // then, if the user accepts an invitation, its home is deleted.
 
 export async function controller(req, res, next) {
-  const { user } = req
+  const inviter = req.user
   const { name } = req.body
 
-  if (!user.homeId)       return next(new E.UnprocessableEntity('no_home'))
-  if (name === user.name) return next(new E.UnprocessableEntity('invite_yourself'))
+  if (!inviter.homeId)
+    return next(new E.UnprocessableEntity('no_home'))
+  if (name === inviter.name)
+    return next(new E.UnprocessableEntity('invite_yourself'))
 
-  const [pendingExists, toUser] = await Promise.all([
-    Invitation.findOne({ fromId: user._id }, { _id: 1 }).lean(),
+  const [pendingExists, invitee] = await Promise.all([
+    Invitation.findOne({ fromId: inviter._id }, { _id: 1 }).lean(),
     User.findOne({ name }, { _id: 1 }).lean()
   ])
 
-  if (pendingExists)      return next(new E.UnprocessableEntity('too_many_invitation'))
-  if (!toUser)            return next(new E.FailedDependency('user'))
+  if (pendingExists)
+    return next(new E.UnprocessableEntity('too_many_invitation'))
+  if (!invitee)
+    return next(new E.FailedDependency('user'))
 
-  await Invitation.create({ fromId: user._id, toId: toUser._id })
+  await Invitation.create({ fromId: inviter._id, toId: invitee._id })
 
   return res.location('/invitation/pendings').status(201).send()
 }

@@ -3,15 +3,17 @@ import E from 'http-errors'
 import V from '../../validations.mjs'
 import { Home, User } from '../../models.mjs'
 
+// @todo: When tasks will exists, a home deletion will result in task deletions
+// also: maybe to delete a home, the approval of all inhabitants should be required ?
 export async function controller(req, res, next) {
-  const { id: homeId } = req.params
+  const _id = req.params.id
 
-  if (req.user.homeId?.toString() !== homeId)
+  if (req.user.homeId?.toString() !== _id)
     return next(new E.Forbidden())
 
   const [doc] = await Promise.all([
-    Home.deleteOne({ _id: homeId }),
-    User.updateMany({ homeId }, { homeId: null })
+    Home.deleteOne({ _id }),
+    User.updateMany({ homeId: _id }, { homeId: null })
   ])
 
   if (doc.deletedCount !== 1)
