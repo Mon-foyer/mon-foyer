@@ -5,11 +5,12 @@ import BearerStrategy from 'passport-http-bearer'
 
 import { User } from './models.mjs'
 
-import * as deleteHome from './controllers/home/delete.controller.mjs'
-import * as getUser from './controllers/user/get.controller.mjs'
-import * as postAuthLogin from './controllers/auth/login.controller.mjs'
-import * as postHome from './controllers/home/post.controller.mjs'
-import * as postUser from './controllers/user/post.controller.mjs'
+import * as deleteHome     from './controllers/home/delete.controller.mjs'
+import * as getUser        from './controllers/user/get.controller.mjs'
+import * as postAuthLogin  from './controllers/auth/login.controller.mjs'
+import * as postHome       from './controllers/home/post.controller.mjs'
+import * as postInvitation from './controllers/invitation/post.controller.mjs'
+import * as postUser       from './controllers/user/post.controller.mjs'
 
 passport.use(
   new BearerStrategy( // done(err, user, { scope: 'all' })
@@ -41,9 +42,10 @@ function validate(schemas) {
 }
 
 export default express.Router()
-  .post('/auth/login',              validate(postAuthLogin.schemas), postAuthLogin.controller)
-  .post('/home',        bearerAuth, validate(postHome.schemas),      postHome.controller)
-  .delete('/home/:id',  bearerAuth, validate(deleteHome.schemas),    deleteHome.controller)
-  .post('/user',                    validate(postUser.schemas),      postUser.controller )
-  .get('/user/:id',     bearerAuth, validate(getUser.schemas),       getUser.controller)
+  .post('/auth/login',              validate(postAuthLogin.schemas),  postAuthLogin.controller)
+  .post('/home',        bearerAuth, validate(postHome.schemas),       postHome.controller)
+  .delete('/home/:id',  bearerAuth, validate(deleteHome.schemas),     deleteHome.controller)
+  .post('/invitation',  bearerAuth, validate(postInvitation.schemas), postInvitation.controller)
+  .post('/user',                    validate(postUser.schemas),       postUser.controller )
+  .get('/user/:id',     bearerAuth, validate(getUser.schemas),        getUser.controller)
   .use('*', (req, res, next) => next(new E.NotFound()))

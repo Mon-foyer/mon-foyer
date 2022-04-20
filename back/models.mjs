@@ -1,5 +1,3 @@
-'use strict'
-
 import mongoose from 'mongoose'
 const Schema = mongoose.Schema
 const ObjectId = mongoose.Types.ObjectId
@@ -8,15 +6,19 @@ export { ObjectId }
 
 const defaultModelOptions = { id: false, timestamps: true, versionKey: false }
 
-export const Home = mongoose.model('Homse', new Schema({
-  name: { type: String }
+export const Home = mongoose.model('Home', new Schema({
+  name: { type: String, required: true }
+}, defaultModelOptions))
+
+export const Invitation = mongoose.model('Invitation', new Schema({
+  fromId: { type: ObjectId, required: true },
+  toId:   { type: ObjectId, required: true }
 }, defaultModelOptions))
 
 export const User = mongoose.model('User', new Schema({
   homeId:   { type: ObjectId, default: null },
-  name:     { type: String, default: '' },
-  password: { type: String },
-  salt:     { type: String },
+  name:     { type: String, required: true },
+  password: { type: String, required: true },
   token:    { type: String, default: null }
 }, defaultModelOptions))
 

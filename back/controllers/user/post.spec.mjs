@@ -4,6 +4,7 @@ import { User } from '../../models.mjs'
 
 describe('POST /user', () => {
   after(() => G.empty())
+
   describe('Sucesses', () => {
     it('Creates a new user', async() => {
       const { headers } = await G.request('post /user')
@@ -17,6 +18,7 @@ describe('POST /user', () => {
       expect(headers.location).eq(`/user/${user._id}`)
     })
   })
+
   describe('Failures', () => {
     it('Returns a 409 when a user already exists', async() => {
       const name = 'rferf'

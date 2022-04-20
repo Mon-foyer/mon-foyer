@@ -18,7 +18,7 @@
       "name": "Home"
     },
     {
-      "name": "Invite",
+      "name": "Invitation",
       "description": "Invitation to join a home"
     },
     {
@@ -211,10 +211,10 @@
         }
       }
     },
-    "/invite": {
+    "/invitation": {
       "post": {
         "tags": [
-          "Invite"
+          "Invitation"
         ],
         "summary": "Creates a new invitation",
         "description": "Sends a new proposal to join a home to a user",
@@ -253,10 +253,10 @@
         }
       }
     },
-    "/invite/{id}": {
+    "/invitation/{id}": {
       "delete": {
         "tags": [
-          "Invite"
+          "Invitation"
         ],
         "summary": "Deletes an invitation",
         "description": "Deletes an invitation by its id",
@@ -286,10 +286,10 @@
         }
       }
     },
-    "/invite/{id}/accept": {
+    "/invitation/{id}/accept": {
       "delete": {
         "tags": [
-          "Invite"
+          "Invitation"
         ],
         "summary": "Accepts an invitation",
         "description": "Adds the target user to the home of the source user.",
@@ -319,13 +319,13 @@
         }
       }
     },
-    "/invite/pendings": {
+    "/invitation/pendings": {
       "get": {
         "tags": [
-          "Invite"
+          "Invitation"
         ],
-        "summary": "Gets a user pending invites",
-        "description": "Retrieves the list of invites not yet approved nor deleted",
+        "summary": "Gets a user pending invitations",
+        "description": "Retrieves the list of invitations not yet approved nor deleted",
         "security": [
           {
             "BearerAuth": []
@@ -333,7 +333,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Pending invites",
+            "description": "Pending invitations",
             "content": {
               "application/json": {
                 "schema": {
@@ -346,19 +346,19 @@
                       "_id": {
                         "$ref": "#/components/schemas/_Id"
                       },
-                      "sentTo": {
+                      "From": {
                         "type": "string",
-                        "description": "Username of the user to which the invitation has been sent"
+                        "description": "Name of the user from which the invitation comes from"
                       },
-                      "sentFrom": {
+                      "To": {
                         "type": "string",
-                        "description": "Username of the user from which the invitation comes from"
+                        "description": "Name of the invited user"
                       }
                     },
                     "required": [
                       "_id",
-                      "sentTo",
-                      "sentFrom"
+                      "from",
+                      "to"
                     ]
                   }
                 }
@@ -575,14 +575,6 @@
           "createdAt": {
             "$ref": "#/components/schemas/CreatedAt"
           },
-          "inhabitants": {
-            "type": "array",
-            "minItems": 1,
-            "maxItems": 2,
-            "items": {
-              "$ref": "#/components/schemas/UserId"
-            }
-          },
           "name": {
             "$ref": "#/components/schemas/Name"
           },
@@ -601,6 +593,24 @@
         "minimum": 400,
         "maximum": 599,
         "description": "Http response status code"
+      },
+      "Invitation": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "$ref": "#/components/schemas/HomeId"
+          },
+          "fromId": {
+            "type": "string",
+            "format": "objectId",
+            "description": "Id of the user who sent the invite"
+          },
+          "toId": {
+            "type": "string",
+            "format": "objectId",
+            "description": "Id of the user who received the invite"
+          }
+        }
       },
       "Name": {
         "type": "string",
