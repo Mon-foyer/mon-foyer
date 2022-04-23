@@ -1,0 +1,22 @@
+{
+  "name": "root",
+  "private": true,
+  "scripts": {
+    "initialize": "npm install && npm run clean && lerna bootstrap",
+    "clean": "lerna clean --yes && lerna exec -- rm -rf dist",
+    "refresh": "lerna bootstrap",
+    "dev:server": "node --trace-warnings  ./packages/back/app.mjs",
+    "dev:client": "yarn dev ./packages/front",
+    "dev": "yarn dev:server && yarn dev:client",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "cz-conventional-changelog": "3.3.0",
+    "lerna": "^4.0.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
+}
