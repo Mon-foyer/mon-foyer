@@ -28,7 +28,7 @@ describe('GET /invitation', () => {
       const { body } = await G.request(`get /invitation`, user1).expect(200)
 
       expect(body).an('array').lengthOf(2)
-      body.sort((a, b) => a.inviter > b.inviter)
+      body.sort((a, b) => a.inviter.name.localeCompare(b.inviter.name))
       expect(body[0]).keys('_id', 'createdAt', 'home', 'invitee', 'inviter')
       expect(body[0]._id).eq(i1._id.toString())
       expect(body[0].home).eql({ _id: home1._id.toString(), name: home1.name })

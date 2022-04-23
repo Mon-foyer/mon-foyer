@@ -58,7 +58,7 @@ function run({ controller }) {
 
 export default express.Router()
   .post('/auth/login',                          validate(authLoginPost), run(authLoginPost))
-  .get('/home/:id',                 bearerAuth, validate(homeGet),       run(homeGet))
+  .get('/home',                     bearerAuth,                          run(homeGet))
   .post('/invitation',              bearerAuth, validate(invitePost),    run(invitePost))
   .delete('/invitation/:id',        bearerAuth, validate(inviteDelete),  run(inviteDelete))
   .delete('/invitation/:id/accept', bearerAuth, validate(inviteAccept),  run(inviteAccept))
