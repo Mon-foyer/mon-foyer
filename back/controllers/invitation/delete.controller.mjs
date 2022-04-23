@@ -5,7 +5,7 @@ import { Invitation } from '../../models.mjs'
 
 export async function controller(req, res, next) {
   const doc = await Invitation.deleteOne(
-    { _id: req.params.id, $or: [{ fromId: req.user._id }, { toId: req.user._id }] }
+    { _id: req.params.id, $or: [{ inviterId: req.user._id }, { inviteeId: req.user._id }] }
   )
 
   if (doc.deletedCount !== 1)

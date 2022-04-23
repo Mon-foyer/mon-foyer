@@ -624,18 +624,18 @@
           "_id": {
             "$ref": "#/components/schemas/_Id"
           },
-          "fromId": {
+          "inviterId": {
             "type": "string",
             "format": "objectId",
-            "description": "Id of the user who sent the invite"
+            "description": "Id of the user who sent the invitation"
           },
           "homeId": {
             "$ref": "#/components/schemas/HomeId"
           },
-          "toId": {
+          "inviteeId": {
             "type": "string",
             "format": "objectId",
-            "description": "Id of the user who received the invite"
+            "description": "Id of the user who received the invitation"
           }
         }
       },

@@ -13,7 +13,7 @@ describe('POST /invitation', () => {
         .send({ name: invitee.name })
         .expect(201)
       const invitation = await Invitation.findOne(
-        { fromId: inviter._id, toId: invitee._id }, { _id: 1 }
+        { inviterId: inviter._id, inviteeId: invitee._id }, { _id: 1 }
       ).lean()
 
       expect(headers.location).eq('/invitation/pendings')
@@ -33,7 +33,7 @@ describe('POST /invitation', () => {
     it('Returns 422 when the user already has a pending invitation', async() => {
       const home = await G.newHome()
       const [inviter, invitee] = await Promise.all([G.newUser({ homeId: home._id }), G.newUser()])
-      await G.newInvitation({ fromId: inviter._id, homeId: inviter.homeId, toId: invitee._id })
+      await G.newInvitation({ inviterId: inviter._id, homeId: inviter.homeId, inviteeId: invitee._id })
       const { body } = await G.request(`post /invitation/`, inviter).send({ name: invitee.name })
         .expect(422)
 

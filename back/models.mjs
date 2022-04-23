@@ -11,9 +11,9 @@ export const Home = mongoose.model('Home', new Schema({
 }, defaultModelOptions))
 
 export const Invitation = mongoose.model('Invitation', new Schema({
-  fromId: { type: ObjectId, required: true },
+  inviterId: { type: ObjectId, required: true },
   homeId: { type: ObjectId, required: true },
-  toId:   { type: ObjectId, required: true }
+  inviteeId:   { type: ObjectId, required: true }
 }, defaultModelOptions))
 
 export const User = mongoose.model('User', new Schema({

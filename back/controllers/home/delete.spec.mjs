@@ -11,7 +11,7 @@ describe('delete /home/:id', () => {
       const [inhabitant, someone] = await Promise.all([
         G.newUser({ homeId: home._id }), G.newUser()
       ])
-      await G.newInvitation({ fromId: inhabitant._id, homeId: home._id, toId: someone._id })
+      await G.newInvitation({ inviterId: inhabitant._id, homeId: home._id, inviteeId: someone._id })
 
       await G.request(`delete /home/${home._id}`, inhabitant).send().expect(204)
 

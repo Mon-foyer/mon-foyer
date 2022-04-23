@@ -13,8 +13,8 @@ describe('DELETE /invitation/:id/accept', () => {
       ])
 
       const [invitationA, invitationB] = await Promise.all([
-        G.newInvitation({ fromId: inviter._id, toId: invitee._id, homeId: inviter.homeId }),
-        G.newInvitation({ fromId: someone._id, toId: invitee._id, homeId: someone.homeId })
+        G.newInvitation({ inviterId: inviter._id, inviteeId: invitee._id, homeId: inviter.homeId }),
+        G.newInvitation({ inviterId: someone._id, inviteeId: invitee._id, homeId: someone.homeId })
       ])
 
       await G.request(`delete /invitation/${invitationA._id}/accept`, invitee).expect(204)
@@ -48,7 +48,7 @@ describe('DELETE /invitation/:id/accept', () => {
         G.newUser(), G.newUser({ homeId: home._id }), G.newUser()
       ])
       const invitation = await G.newInvitation(
-        { fromId: inviter._id, homeId: home._id, toId: invitee._id }
+        { inviterId: inviter._id, homeId: home._id, inviteeId: invitee._id }
       )
 
       await G.request(`delete /invitation/${invitation._id}/accept`, someone).expect(404)
@@ -57,7 +57,7 @@ describe('DELETE /invitation/:id/accept', () => {
     it('Returns 424 when the inviter does not exists', async() => {
       const [home, invitee] = await Promise.all([G.newHome(), G.newUser()])
       const invitation = await G.newInvitation({
-        fromId: new ObjectId(), homeId: home._id, toId: invitee._id
+        inviterId: new ObjectId(), homeId: home._id, inviteeId: invitee._id
       })
 
       const { body } = await G.request(`delete /invitation/${invitation._id}/accept`, invitee)

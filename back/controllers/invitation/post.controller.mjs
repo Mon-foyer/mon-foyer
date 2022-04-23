@@ -17,7 +17,7 @@ export async function controller(req, res, next) {
     return next(new E.UnprocessableEntity('invite_yourself'))
 
   const [pendingExists, invitee] = await Promise.all([
-    Invitation.findOne({ fromId: inviter._id }, { _id: 1 }).lean(),
+    Invitation.findOne({ inviterId: inviter._id }, { _id: 1 }).lean(),
     User.findOne({ name }, { _id: 1 }).lean()
   ])
 
@@ -26,7 +26,7 @@ export async function controller(req, res, next) {
   if (!invitee)
     return next(new E.FailedDependency('user'))
 
-  await Invitation.create({ fromId: inviter._id, homeId: inviter.homeId, toId: invitee._id })
+  await Invitation.create({ inviterId: inviter._id, homeId: inviter.homeId, inviteeId: invitee._id })
 
   return res.location('/invitation/pendings').status(201).send()
 }

@@ -10,7 +10,7 @@ describe('DELETE /invitation/:id', () => {
       const home = await G.newHome()
       const [inviter, invitee] = await Promise.all([G.newUser({ homeId: home._id }), G.newUser()])
       const invitation = await G.newInvitation({
-        fromId: inviter._id, homeId: inviter.homeId, toId: invitee._id
+        inviterId: inviter._id, homeId: inviter.homeId, inviteeId: invitee._id
       })
       await G.request(`delete /invitation/${invitation._id}`, inviter).expect(204)
       expect(await Invitation.findOne({ _id: invitation._id })).null
@@ -20,7 +20,7 @@ describe('DELETE /invitation/:id', () => {
       const home = await G.newHome()
       const [inviter, invitee] = await Promise.all([G.newUser({ homeId: home._id }), G.newUser()])
       const invitation = await G.newInvitation({
-        fromId: inviter._id, homeId: inviter.homeId, toId: invitee._id
+        inviterId: inviter._id, homeId: inviter.homeId, inviteeId: invitee._id
       })
       await G.request(`delete /invitation/${invitation._id}`, invitee).expect(204)
       expect(await Invitation.findOne({ _id: invitation._id })).null
@@ -34,7 +34,7 @@ describe('DELETE /invitation/:id', () => {
         G.newUser({ homeId: home._id }), G.newUser(), G.newUser()
       ])
       const invitation = await G.newInvitation({
-        fromId: inviter._id, homeId: inviter.homeId, toId: invitee._id
+        inviterId: inviter._id, homeId: inviter.homeId, inviteeId: invitee._id
       })
       await G.request(`delete /invitation/${invitation._id}`, someone).expect(404)
       expect(await Invitation.findOne({ _id: invitation._id }).lean()).not.null
