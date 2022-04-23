@@ -12,6 +12,7 @@ export const Home = mongoose.model('Home', new Schema({
 
 export const Invitation = mongoose.model('Invitation', new Schema({
   fromId: { type: ObjectId, required: true },
+  homeId: { type: ObjectId, required: true },
   toId:   { type: ObjectId, required: true }
 }, defaultModelOptions))
 

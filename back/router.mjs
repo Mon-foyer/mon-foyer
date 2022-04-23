@@ -5,13 +5,14 @@ import BearerStrategy from 'passport-http-bearer'
 
 import { User } from './models.mjs'
 
-import * as deleteHome    from './controllers/home/delete.controller.mjs'
-import * as deleteInvite  from './controllers/invitation/delete.controller.mjs'
-import * as getUser       from './controllers/user/get.controller.mjs'
-import * as postAuthLogin from './controllers/auth/login.controller.mjs'
-import * as postHome      from './controllers/home/post.controller.mjs'
-import * as postInvite    from './controllers/invitation/post.controller.mjs'
-import * as postUser      from './controllers/user/post.controller.mjs'
+import * as authLoginPost from './controllers/auth/login.controller.mjs'
+import * as homeDelete    from './controllers/home/delete.controller.mjs'
+import * as homePost      from './controllers/home/post.controller.mjs'
+import * as inviteAccept  from './controllers/invitation/accept.controller.mjs'
+import * as inviteDelete  from './controllers/invitation/delete.controller.mjs'
+import * as invitePost    from './controllers/invitation/post.controller.mjs'
+import * as userGet       from './controllers/user/get.controller.mjs'
+import * as userPost      from './controllers/user/post.controller.mjs'
 
 passport.use(
   new BearerStrategy( // done(err, user, { scope: 'all' })
@@ -43,11 +44,14 @@ function validate(schemas) {
 }
 
 export default express.Router()
-  .post('/auth/login',                   validate(postAuthLogin.schemas),  postAuthLogin.controller)
-  .post('/home',             bearerAuth, validate(postHome.schemas),       postHome.controller)
-  .delete('/home/:id',       bearerAuth, validate(deleteHome.schemas),     deleteHome.controller)
-  .post('/invitation',       bearerAuth, validate(postInvite.schemas),     postInvite.controller)
-  .delete('/invitation/:id', bearerAuth, validate(deleteInvite.schemas),   deleteInvite.controller)
-  .post('/user',                         validate(postUser.schemas),       postUser.controller )
-  .get('/user/:id',          bearerAuth, validate(getUser.schemas),        getUser.controller)
+  .post('/auth/login',                    validate(authLoginPost.schemas), authLoginPost.controller)
+  .post('/home',              bearerAuth, validate(homePost.schemas),      homePost.controller)
+  .delete('/home/:id',        bearerAuth, validate(homeDelete.schemas),    homeDelete.controller)
+  .post('/invitation',        bearerAuth, validate(invitePost.schemas),    invitePost.controller)
+  .delete('/invitation/:id',  bearerAuth, validate(inviteDelete.schemas),  inviteDelete.controller)
+  .delete(
+    '/invitation/:id/accept', bearerAuth, validate(inviteAccept.schemas),  inviteAccept.controller
+  )
+  .post('/user',                          validate(userPost.schemas),      userPost.controller )
+  .get('/user/:id',           bearerAuth, validate(userGet.schemas),       userGet.controller)
   .use('*', (req, res, next) => next(new E.NotFound()))

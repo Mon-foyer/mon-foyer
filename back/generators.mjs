@@ -32,7 +32,8 @@ export default {
   },
 
   newUser: async(user = {}) => {
-    user = Object.assign({ name: chance.name(), password: 'The pass !' }, user)
+    // UUID() to avoid generating duplicated names
+    user = Object.assign({ name: crypto.randomUUID(), password: 'The pass !' }, user)
 
     const salt = crypto.randomBytes(16).toString('hex')
 

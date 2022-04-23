@@ -1,22 +1,27 @@
 import { expect } from 'chai'
 import G from '../../generators.mjs'
-import { Home, ObjectId, User } from '../../models.mjs'
+import { Home, Invitation, ObjectId, User } from '../../models.mjs'
 
 describe('delete /home/:id', () => {
   after(() => G.empty())
 
   describe('Sucesses', () => {
-    it('Deletes a home', async() => {
-      const home1 = await G.newHome()
-      const user1 = await G.newUser({ homeId: home1._id })
-
-      await G.request(`delete /home/${home1._id}`, user1).send().expect(204)
-
-      const [home, user] = await Promise.all([
-        Home.findOne({ _id: home1._id }).lean(),
-        User.findOne({ _id: user1._id }).lean()
+    it('Deletes a home and its pending invitations', async() => {
+      const home = await G.newHome()
+      const [inhabitant, someone] = await Promise.all([
+        G.newUser({ homeId: home._id }), G.newUser()
       ])
-      expect(home).null
+      await G.newInvitation({ fromId: inhabitant._id, homeId: home._id, toId: someone._id })
+
+      await G.request(`delete /home/${home._id}`, inhabitant).send().expect(204)
+
+      const [uhome, nInvitations, user] = await Promise.all([
+        Home.findOne({ _id: home._id }).lean(),
+        Invitation.countDocuments({ homeId: home._id }),
+        User.findOne({ _id: inhabitant._id }).lean()
+      ])
+      expect(nInvitations).eq(0)
+      expect(uhome).null
       expect(user.homeId).null
     })
   })

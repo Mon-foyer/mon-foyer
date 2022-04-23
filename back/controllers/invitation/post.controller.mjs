@@ -26,7 +26,7 @@ export async function controller(req, res, next) {
   if (!invitee)
     return next(new E.FailedDependency('user'))
 
-  await Invitation.create({ fromId: inviter._id, toId: invitee._id })
+  await Invitation.create({ fromId: inviter._id, homeId: inviter.homeId, toId: invitee._id })
 
   return res.location('/invitation/pendings').status(201).send()
 }

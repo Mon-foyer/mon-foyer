@@ -7,15 +7,21 @@ describe('DELETE /invitation/:id', () => {
 
   describe('Success', () => {
     it('Deletes activities in which the user is the inviter', async() => {
-      const [inviter, invitee] = await Promise.all([G.newUser(), G.newUser()])
-      const invitation = await G.newInvitation({ fromId: inviter._id, toId: invitee._id })
+      const home = await G.newHome()
+      const [inviter, invitee] = await Promise.all([G.newUser({ homeId: home._id }), G.newUser()])
+      const invitation = await G.newInvitation({
+        fromId: inviter._id, homeId: inviter.homeId, toId: invitee._id
+      })
       await G.request(`delete /invitation/${invitation._id}`, inviter).expect(204)
       expect(await Invitation.findOne({ _id: invitation._id })).null
     })
 
     it('Deletes activities in which the user is the invitee', async() => {
-      const [inviter, invitee] = await Promise.all([G.newUser(), G.newUser()])
-      const invitation = await G.newInvitation({ fromId: inviter._id, toId: invitee._id })
+      const home = await G.newHome()
+      const [inviter, invitee] = await Promise.all([G.newUser({ homeId: home._id }), G.newUser()])
+      const invitation = await G.newInvitation({
+        fromId: inviter._id, homeId: inviter.homeId, toId: invitee._id
+      })
       await G.request(`delete /invitation/${invitation._id}`, invitee).expect(204)
       expect(await Invitation.findOne({ _id: invitation._id })).null
     })
@@ -23,8 +29,13 @@ describe('DELETE /invitation/:id', () => {
 
   describe('Failure', () => {
     it('Returns 404 when a user tries to delete the invitation of someone else', async() => {
-      const [inviter, invitee, someone] = await Promise.all([G.newUser(), G.newUser(), G.newUser()])
-      const invitation = await G.newInvitation({ fromId: inviter._id, toId: invitee._id })
+      const home = await G.newHome()
+      const [inviter, invitee, someone] = await Promise.all([
+        G.newUser({ homeId: home._id }), G.newUser(), G.newUser()
+      ])
+      const invitation = await G.newInvitation({
+        fromId: inviter._id, homeId: inviter.homeId, toId: invitee._id
+      })
       await G.request(`delete /invitation/${invitation._id}`, someone).expect(404)
       expect(await Invitation.findOne({ _id: invitation._id }).lean()).not.null
     })

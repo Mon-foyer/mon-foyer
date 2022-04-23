@@ -297,9 +297,6 @@
           "401": {
             "$ref": "#/components/responses/Unauthorized"
           },
-          "403": {
-            "description": "The invitation does not come from or has not been sent to the user"
-          },
           "404": {
             "$ref": "#/components/responses/NotFound"
           }
@@ -312,7 +309,7 @@
           "Invitation"
         ],
         "summary": "Accepts an invitation",
-        "description": "Adds the target user to the home of the source user.",
+        "description": "Adds the invitee to the home of the inviter.",
         "security": [
           {
             "BearerAuth": []
@@ -330,11 +327,18 @@
           "401": {
             "$ref": "#/components/responses/Unauthorized"
           },
-          "403": {
-            "description": "The invitation does not target the user"
-          },
           "404": {
             "$ref": "#/components/responses/NotFound"
+          },
+          "424": {
+            "description": "The inviter does not exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         }
       }
@@ -618,12 +622,15 @@
         "type": "object",
         "properties": {
           "_id": {
-            "$ref": "#/components/schemas/HomeId"
+            "$ref": "#/components/schemas/_Id"
           },
           "fromId": {
             "type": "string",
             "format": "objectId",
             "description": "Id of the user who sent the invite"
+          },
+          "homeId": {
+            "$ref": "#/components/schemas/HomeId"
           },
           "toId": {
             "type": "string",

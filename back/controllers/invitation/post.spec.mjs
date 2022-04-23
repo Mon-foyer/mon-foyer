@@ -7,13 +7,13 @@ describe('POST /invitation', () => {
 
   describe('Success', () => {
     it('Generates a new invitation', async() => {
-      const home3 = await G.newHome()
-      const [requester, user6] = await Promise.all([G.newUser({ homeId: home3._id }), G.newUser()])
-      const { headers } = await G.request(`post /invitation/`, requester)
-        .send({ name: user6.name })
+      const home = await G.newHome()
+      const [inviter, invitee] = await Promise.all([G.newUser({ homeId: home._id }), G.newUser()])
+      const { headers } = await G.request(`post /invitation/`, inviter)
+        .send({ name: invitee.name })
         .expect(201)
       const invitation = await Invitation.findOne(
-        { fromId: requester._id, toId: user6._id }, { _id: 1 }
+        { fromId: inviter._id, toId: invitee._id }, { _id: 1 }
       ).lean()
 
       expect(headers.location).eq('/invitation/pendings')
@@ -31,10 +31,10 @@ describe('POST /invitation', () => {
     })
 
     it('Returns 422 when the user already has a pending invitation', async() => {
-      const home1 = await G.newHome()
-      const [requester, user3] = await Promise.all([G.newUser({ homeId: home1._id }), G.newUser()])
-      await G.newInvitation({ fromId: requester._id, toId: user3._id })
-      const { body } = await G.request(`post /invitation/`, requester).send({ name: user3.name })
+      const home = await G.newHome()
+      const [inviter, invitee] = await Promise.all([G.newUser({ homeId: home._id }), G.newUser()])
+      await G.newInvitation({ fromId: inviter._id, homeId: inviter.homeId, toId: invitee._id })
+      const { body } = await G.request(`post /invitation/`, inviter).send({ name: invitee.name })
         .expect(422)
 
       expect(body.error.message).eq('too_many_invitation')
