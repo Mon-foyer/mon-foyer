@@ -6,8 +6,7 @@
     "clean": "lerna clean --yes && lerna exec -- rm -rf dist",
     "refresh": "lerna bootstrap",
     "dev:server": "node --trace-warnings  ./packages/back/app.mjs",
-    "dev:client": "yarn dev ./packages/front",
-    "dev": "yarn dev:server && yarn dev:client",
+    "dev:client": "cd ./packages/front/ && yarn dev",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
