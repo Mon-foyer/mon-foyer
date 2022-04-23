@@ -16,7 +16,7 @@ describe('POST /invitation', () => {
         { inviterId: inviter._id, inviteeId: invitee._id }, { _id: 1 }
       ).lean()
 
-      expect(headers.location).eq('/invitation/pendings')
+      expect(headers.location).eq('/invitation')
       expect(invitation).not.null
     })
   })

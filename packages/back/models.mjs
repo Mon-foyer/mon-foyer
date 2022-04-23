@@ -5,9 +5,16 @@ const ObjectId = mongoose.Types.ObjectId
 export { ObjectId }
 
 const defaultModelOptions = { id: false, timestamps: true, versionKey: false }
+const defaultHomeNames = [
+  'Cul-de-Sac', 'Le Terrier', 'Mon Nid', 'Mon Cocon', 'Mon Foyer', 'Chez moi'
+]
 
 export const Home = mongoose.model('Home', new Schema({
-  name: { type: String, required: true }
+  name: {
+    type: String,
+    required: true,
+    default: defaultHomeNames[Math.floor(Math.random() * defaultHomeNames.length - 1)]
+  }
 }, defaultModelOptions))
 
 export const Invitation = mongoose.model('Invitation', new Schema({

@@ -1,12 +1,12 @@
 import { expect } from 'chai'
 import G from '../../generators.mjs'
-import { User } from '../../models.mjs'
+import { Home, User } from '../../models.mjs'
 
 describe('POST /user', () => {
   after(() => G.empty())
 
   describe('Sucesses', () => {
-    it('Creates a new user', async() => {
+    it('Creates a new user with its default home', async() => {
       const { headers } = await G.request('post /user')
         .send({ name: 'ggg', password: 'eoirfoierfeorighe' })
         .expect(201)
@@ -14,6 +14,12 @@ describe('POST /user', () => {
       const user = await User.findOne({ _id: userId })
 
       expect(user).not.null
+      expect(user.homeId).exist
+
+      const home = Home.findOne({ _id: user.homeId }).lean()
+
+      expect(home).exist
+
       expect(user.password).match(/^[a-z\d]{32}:[a-z\d]+$/)
       expect(headers.location).eq(`/user/${user._id}`)
     })

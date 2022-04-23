@@ -80,44 +80,6 @@
         }
       }
     },
-    "/home": {
-      "post": {
-        "tags": [
-          "Home"
-        ],
-        "summary": "Creates a new home",
-        "description": "Creates a new home for a user",
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "properties": {
-                  "name": {
-                    "$ref": "#/components/schemas/Name"
-                  }
-                },
-                "required": [
-                  "name"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "$ref": "#/components/responses/LocationHeader"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
-        }
-      }
-    },
     "/home/{id}": {
       "get": {
         "tags": [
@@ -178,40 +140,91 @@
             "$ref": "#/components/responses/NotFound"
           }
         }
-      },
-      "delete": {
+      }
+    },
+    "/invitation": {
+      "get": {
         "tags": [
-          "Home"
+          "Invitation"
         ],
-        "summary": "Deletes a home",
-        "description": "Deletes a home by its id and all its related data",
+        "summary": "Gets a user pending invitations",
+        "description": "Retrieves the list of invitations not yet accepted nor rejected",
         "security": [
           {
             "BearerAuth": []
           }
         ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/id"
-          }
-        ],
         "responses": {
-          "204": {
-            "description": "The home has been successfully deleted"
+          "200": {
+            "description": "Pending invitations",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "maxItems": 2,
+                  "minItems": 0,
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "_id": {
+                        "$ref": "#/components/schemas/_Id"
+                      },
+                      "createdAt": {
+                        "$ref": "#/components/schemas/CreatedAt"
+                      },
+                      "home": {
+                        "type": "object",
+                        "description": "Home to which the user is invited",
+                        "properties": {
+                          "_id": {
+                            "$ref": "#/components/schemas/HomeId"
+                          },
+                          "name": {
+                            "$ref": "#/components/schemas/Name"
+                          }
+                        }
+                      },
+                      "invitee": {
+                        "type": "object",
+                        "description": "User invited",
+                        "properties": {
+                          "_id": {
+                            "$ref": "#/components/schemas/UserId"
+                          },
+                          "name": {
+                            "$ref": "#/components/schemas/Name"
+                          }
+                        }
+                      },
+                      "inviter": {
+                        "type": "object",
+                        "description": "User inviter",
+                        "properties": {
+                          "_id": {
+                            "$ref": "#/components/schemas/UserId"
+                          },
+                          "name": {
+                            "$ref": "#/components/schemas/Name"
+                          }
+                        }
+                      }
+                    },
+                    "required": [
+                      "_id",
+                      "createdAt",
+                      "inviter",
+                      "invitee"
+                    ]
+                  }
+                }
+              }
+            }
           },
           "401": {
             "$ref": "#/components/responses/Unauthorized"
-          },
-          "403": {
-            "description": "The home does not belong to the user"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
           }
         }
-      }
-    },
-    "/invitation": {
+      },
       "post": {
         "tags": [
           "Invitation"
@@ -339,58 +352,6 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "/invitation/pendings": {
-      "get": {
-        "tags": [
-          "Invitation"
-        ],
-        "summary": "Gets a user pending invitations",
-        "description": "Retrieves the list of invitations not yet approved nor deleted",
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Pending invitations",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "maxItems": 2,
-                  "minItems": 0,
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "_id": {
-                        "$ref": "#/components/schemas/_Id"
-                      },
-                      "From": {
-                        "type": "string",
-                        "description": "Name of the user from which the invitation comes from"
-                      },
-                      "To": {
-                        "type": "string",
-                        "description": "Name of the invited user"
-                      }
-                    },
-                    "required": [
-                      "_id",
-                      "from",
-                      "to"
-                    ]
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
           }
         }
       }

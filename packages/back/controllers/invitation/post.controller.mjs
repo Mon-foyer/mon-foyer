@@ -3,18 +3,14 @@ import E from 'http-errors'
 import V from '../../validations.mjs'
 import { Invitation, User } from '../../models.mjs'
 
-// should we check whether the target user is in a home before the invitation creation ?
-// should a default home be created when a user creates its account ?
-// then, if the user accepts an invitation, its home is deleted.
-
-export async function controller(req, res, next) {
+export async function controller(req, res) {
   const inviter = req.user
   const { name } = req.body
 
   if (!inviter.homeId)
-    return next(new E.UnprocessableEntity('no_home'))
+    throw new E.UnprocessableEntity('no_home')
   if (name === inviter.name)
-    return next(new E.UnprocessableEntity('invite_yourself'))
+    throw new E.UnprocessableEntity('invite_yourself')
 
   const [pendingExists, invitee] = await Promise.all([
     Invitation.findOne({ inviterId: inviter._id }, { _id: 1 }).lean(),
@@ -22,13 +18,15 @@ export async function controller(req, res, next) {
   ])
 
   if (pendingExists)
-    return next(new E.UnprocessableEntity('too_many_invitation'))
+    throw new E.UnprocessableEntity('too_many_invitation')
   if (!invitee)
-    return next(new E.FailedDependency('user'))
+    throw new E.FailedDependency('user')
 
-  await Invitation.create({ inviterId: inviter._id, homeId: inviter.homeId, inviteeId: invitee._id })
+  await Invitation.create({
+    inviterId: inviter._id, homeId: inviter.homeId, inviteeId: invitee._id
+  })
 
-  return res.location('/invitation/pendings').status(201).send()
+  return res.location('/invitation').status(201).send()
 }
 
 export const schemas = {

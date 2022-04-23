@@ -6,7 +6,7 @@ import zxcvbnEnPackage from '@zxcvbn-ts/language-en'
 import zxcvbnFrPackage from '@zxcvbn-ts/language-fr'
 
 import V from '../../validations.mjs'
-import { User } from '../../models.mjs'
+import { Home, User } from '../../models.mjs'
 
 zxcvbnOptions.setOptions({
   translations: zxcvbnEnPackage.translations,
@@ -18,17 +18,19 @@ zxcvbnOptions.setOptions({
   }
 })
 
-export async function controller(req, res, next) {
+export async function controller(req, res) {
   const { name, password } = req.body
 
   if (await User.findOne({ name }, { _id: 1 }).lean())
-    return next(new E.Conflict('user_already_exists'))
+    throw new E.Conflict('user_already_exists')
 
   if (zxcvbn(password).score < 3)
-    return next(new E.UnprocessableEntity('password_too_weak'))
+    throw new E.UnprocessableEntity('password_too_weak')
 
+  const home = await new Home().save()
   const salt = crypto.randomBytes(16).toString('hex')
   const user = await User.create({
+    homeId: home._id,
     name,
     password: `${salt}:${crypto.pbkdf2Sync(password, salt, 1000, 64, `sha512`).toString(`hex`)}`
   })
