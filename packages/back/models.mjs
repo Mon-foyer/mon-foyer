@@ -13,7 +13,7 @@ export const Home = mongoose.model('Home', new Schema({
   name: {
     type: String,
     required: true,
-    default: defaultHomeNames[Math.floor(Math.random() * defaultHomeNames.length - 1)]
+    default: defaultHomeNames[Math.floor(Math.random() * (defaultHomeNames.length - 1))]
   }
 }, defaultModelOptions))
 

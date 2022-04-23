@@ -50,6 +50,7 @@ function run({ controller }) {
       next()
     }
     catch(err) {
+      // console.error(err)
       next(err)
     }
   }
