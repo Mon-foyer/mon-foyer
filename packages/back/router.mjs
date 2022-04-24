@@ -5,18 +5,18 @@ import BearerStrategy from 'passport-http-bearer'
 
 import { User } from './models.mjs'
 
-import * as authLoginPost from './controllers/auth/login.controller.mjs'
-import * as homeGet       from './controllers/home/get.controller.mjs'
-import * as inviteAccept  from './controllers/invitation/accept.controller.mjs'
-import * as inviteDelete  from './controllers/invitation/delete.controller.mjs'
-import * as inviteGet     from './controllers/invitation/get.controller.mjs'
-import * as invitePost    from './controllers/invitation/post.controller.mjs'
-import * as userGet       from './controllers/user/get.controller.mjs'
-import * as userPost      from './controllers/user/post.controller.mjs'
+import * as authLoginPost    from './controllers/auth/login.controller.mjs'
+import * as homeGet          from './controllers/home/get.controller.mjs'
+import * as invitationAccept from './controllers/invitation/accept.controller.mjs'
+import * as invitationDelete from './controllers/invitation/delete.controller.mjs'
+import * as invitationGet    from './controllers/invitation/get.controller.mjs'
+import * as invitationPost   from './controllers/invitation/post.controller.mjs'
+import * as userGet          from './controllers/user/get.controller.mjs'
+import * as userPost         from './controllers/user/post.controller.mjs'
 
 passport.use(
   new BearerStrategy( // done(err, user, { scope: 'all' })
-    (token, done) => User.findOne({ token }, (err, user) => done(err, user || false)).lean()
+    (token, done) => User.findOne({ token }, (err, user) => done(err, user || false))
   )
 )
 
@@ -43,6 +43,12 @@ function validate({ schemas }) {
   }
 }
 
+/**
+ * Generates a Middleware that executes a controller
+ *
+ * @param  {Function} controller Controller to execute
+ * @return {Function}
+ */
 function run({ controller }) {
   return async(req, res, next) => {
     try {
@@ -57,12 +63,12 @@ function run({ controller }) {
 }
 
 export default express.Router()
-  .post('/auth/login',                          validate(authLoginPost), run(authLoginPost))
-  .get('/home',                     bearerAuth,                          run(homeGet))
-  .post('/invitation',              bearerAuth, validate(invitePost),    run(invitePost))
-  .delete('/invitation/:id',        bearerAuth, validate(inviteDelete),  run(inviteDelete))
-  .delete('/invitation/:id/accept', bearerAuth, validate(inviteAccept),  run(inviteAccept))
-  .get('/invitation',               bearerAuth,                          run(inviteGet))
-  .post('/user',                                validate(userPost),      run(userPost) )
-  .get('/user/:id',                 bearerAuth, validate(userGet),       run(userGet))
+  .post('/auth/login',                          validate(authLoginPost),    run(authLoginPost))
+  .get('/home',                     bearerAuth,                             run(homeGet))
+  .post('/invitation',              bearerAuth, validate(invitationPost),   run(invitationPost))
+  .delete('/invitation/:id',        bearerAuth, validate(invitationDelete), run(invitationDelete))
+  .delete('/invitation/:id/accept', bearerAuth, validate(invitationAccept), run(invitationAccept))
+  .get('/invitation',               bearerAuth,                             run(invitationGet))
+  .post('/user',                                validate(userPost),         run(userPost) )
+  .get('/user/:id',                 bearerAuth, validate(userGet),          run(userGet))
   .use('*', (req, res, next) => next(new E.NotFound()))

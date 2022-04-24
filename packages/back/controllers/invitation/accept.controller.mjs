@@ -1,12 +1,12 @@
 import E from 'http-errors'
 
 import V from '../../validations.mjs'
-import { Home, Invitation, User } from '../../models.mjs'
+import { Invitation, User } from '../../models.mjs'
 
 export async function controller(req, res) {
-  const invitee = req.user
-  const oldHomeId = req.user.homeId
-  const invitation = await Invitation.findOne({ _id: req.params.id, inviteeId: invitee._id }).lean()
+  const user = req.user
+  const { _id: inviteeId } = user
+  const invitation = await Invitation.findOne({ _id: req.params.id, inviteeId }).lean()
 
   if (!invitation)
     throw new E.NotFound()
@@ -17,15 +17,11 @@ export async function controller(req, res) {
     throw new E.FailedDependency('inviter')
 
   await Promise.all([
-    User.updateOne({ _id: invitee._id }, { homeId: inviter.homeId }),
-    Invitation.deleteMany({ $or: [{ inviterId: invitee._id }, { inviteeId: invitee._id }] })
+    user.changeHome(inviter.homeId),
+    Invitation.deleteMany({ $or: [{ inviterId: inviteeId }, { inviteeId }] })
   ])
 
-  // When a home is not related to a user, it's deleted
-  if (await User.countDocuments({ homeId: oldHomeId }) === 0)
-    await Home.deleteOne({ _id: oldHomeId })
-
-  return res.status(204).send()
+  res.status(204).send()
 }
 
 export const schemas = {

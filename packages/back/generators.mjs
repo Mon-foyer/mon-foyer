@@ -29,9 +29,7 @@ export default {
 
   newHome,
 
-  newInvitation: async(invitation = {}) => {
-    return Invitation.create(invitation)
-  },
+  newInvitation: async(invitation = {}) => Invitation.create(invitation),
 
   newUser: async(user = {}) => {
     // UUID() to avoid generating duplicated names

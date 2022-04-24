@@ -12,23 +12,49 @@ const defaultHomeNames = [
 export const Home = mongoose.model('Home', new Schema({
   name: {
     type: String,
+    default: defaultHomeNames[Math.floor(Math.random() * (defaultHomeNames.length - 1))],
     required: true,
-    default: defaultHomeNames[Math.floor(Math.random() * (defaultHomeNames.length - 1))]
   }
 }, defaultModelOptions))
 
 export const Invitation = mongoose.model('Invitation', new Schema({
   inviterId: { type: ObjectId, required: true },
-  homeId: { type: ObjectId, required: true },
-  inviteeId:   { type: ObjectId, required: true }
+  homeId:    { type: ObjectId, required: true },
+  inviteeId: { type: ObjectId, required: true }
 }, defaultModelOptions))
 
-export const User = mongoose.model('User', new Schema({
+const UserSchema = new Schema({
   homeId:   { type: ObjectId, required: true },
+  joinedAt: { type: Date, default: () => new Date(), required: false },
   name:     { type: String, required: true },
   password: { type: String, required: true },
   token:    { type: String, default: null }
-}, defaultModelOptions))
+}, defaultModelOptions)
+
+UserSchema.methods = {
+  changeHome: async function(newHomeId=null) {
+    const Home = mongoose.model('Home')
+    const User = mongoose.model('User')
+    const oldHomeId = this.homeId
+
+    if (!newHomeId) {
+      const home = await new Home().save()
+      newHomeId = home._id
+    }
+
+    await this.updateOne({ homeId: newHomeId, joinedAt: new Date() })
+
+    if (!await User.findOne({ homeId: oldHomeId }, { _id: 1 }).lean()) {
+      await Promise.all([
+        Home.deleteOne({ _id: oldHomeId }),
+        mongoose.model('Invitation').deleteMany({ homeId: oldHomeId })
+      ])
+    }
+  }
+}
+
+export const User = mongoose.model('User', UserSchema)
+
 
 /**
  * Connects to the mongodb database

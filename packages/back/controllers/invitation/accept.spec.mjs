@@ -22,7 +22,8 @@ describe('DELETE /invitation/:id/accept', () => {
       await G.request(`delete /invitation/${invitationA._id}/accept`, invitee).expect(204)
 
       const user = await User.findOne({ _id: invitee._id }).lean()
-      expect(user).not.null
+      expect(user).exist
+      expect(user.joinedAt).a('date')
       expect(user.homeId).eql(homeA._id).eql(inviter._id)
       const nInvitations = await Invitation.countDocuments({
         _id: { $in: [invitationA._id, invitationB._id] }

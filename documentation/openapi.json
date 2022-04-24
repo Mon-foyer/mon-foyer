@@ -103,29 +103,26 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "_id": {
-                      "$ref": "#/components/schemas/_Id"
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/Home"
                     },
-                    "inhabitants": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "_id": {
-                            "$ref": "#/components/schemas/UserId"
-                          },
-                          "name": {
-                            "$ref": "#/components/schemas/Name"
+                    {
+                      "type": "object",
+                      "properties": {
+                        "inhabitants": {
+                          "type": "array",
+                          "description": "Home inhabitants **without their homeId, password and token**",
+                          "items": {
+                            "$ref": "#/components/schemas/User"
                           }
                         }
                       }
-                    },
-                    "name": {
-                      "$ref": "#/components/schemas/Name"
                     }
-                  }
+                  ],
+                  "required": [
+                    "inhabitants"
+                  ]
                 }
               }
             }
@@ -161,8 +158,6 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "maxItems": 2,
-                  "minItems": 0,
                   "items": {
                     "type": "object",
                     "properties": {
@@ -212,6 +207,7 @@
                     "required": [
                       "_id",
                       "createdAt",
+                      "home",
                       "inviter",
                       "invitee"
                     ]
@@ -422,28 +418,11 @@
         ],
         "responses": {
           "200": {
-            "description": "User",
+            "description": "The targeted user **without its password and token**",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "_id": {
-                      "$ref": "#/components/schemas/_Id"
-                    },
-                    "createdAt": {
-                      "$ref": "#/components/schemas/CreatedAt"
-                    },
-                    "homeId": {
-                      "$ref": "#/components/schemas/HomeId"
-                    },
-                    "name": {
-                      "$ref": "#/components/schemas/Name"
-                    },
-                    "updatedAt": {
-                      "$ref": "#/components/schemas/UpdatedAt"
-                    }
-                  }
+                  "$ref": "#/components/schemas/User"
                 }
               }
             }
@@ -546,7 +525,11 @@
           "status": {
             "$ref": "#/components/schemas/HttpError"
           }
-        }
+        },
+        "required": [
+          "error",
+          "status"
+        ]
       },
       "Home": {
         "type": "object",
@@ -563,7 +546,13 @@
           "updatedAt": {
             "$ref": "#/components/schemas/UpdatedAt"
           }
-        }
+        },
+        "required": [
+          "_id",
+          "createdAt",
+          "name",
+          "updatedAt"
+        ]
       },
       "HomeId": {
         "type": "string",
@@ -622,6 +611,11 @@
           "homeId": {
             "$ref": "#/components/schemas/HomeId"
           },
+          "joinedAt": {
+            "type": "string",
+            "format": "date",
+            "description": "Date at which the user joined its current home"
+          },
           "name": {
             "$ref": "#/components/schemas/Name"
           },
@@ -635,7 +629,14 @@
           "updatedAt": {
             "$ref": "#/components/schemas/UpdatedAt"
           }
-        }
+        },
+        "required": [
+          "_id",
+          "createdAt",
+          "joinedAt",
+          "name",
+          "updatedAt"
+        ]
       },
       "UserId": {
         "type": "string",
