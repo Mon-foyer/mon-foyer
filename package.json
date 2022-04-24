@@ -5,7 +5,7 @@
     "initialize": "npm install && npm run clean && lerna bootstrap",
     "clean": "lerna clean --yes && lerna exec -- rm -rf dist",
     "refresh": "lerna bootstrap",
-    "dev:server": "node --trace-warnings  ./packages/back/app.mjs",
+    "dev:server": "node --trace-warnings  ./packages/api/app.mjs",
     "dev:client": "cd ./packages/front/ && yarn dev",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
