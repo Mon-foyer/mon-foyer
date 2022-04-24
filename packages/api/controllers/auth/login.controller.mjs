@@ -21,7 +21,7 @@ export async function controller(req, res) {
 
   await User.updateOne({ _id: user._id }, { token })
 
-  return res.status(200).send({ token })
+  res.status(200).send({ token })
 }
 
 export const schemas = {

@@ -3,8 +3,7 @@ import E from 'http-errors'
 import V from '../../validations.mjs'
 import { Invitation, User } from '../../models.mjs'
 
-export async function controller(req, res) {
-  const inviter = req.user
+export async function controller(req, res, inviter) {
   const { name } = req.body
 
   if (name === inviter.name)
@@ -24,7 +23,7 @@ export async function controller(req, res) {
     inviterId: inviter._id, homeId: inviter.homeId, inviteeId: invitee._id
   })
 
-  return res.location('/invitation').status(201).send()
+  res.location('/invitation').status(201).send()
 }
 
 export const schemas = {

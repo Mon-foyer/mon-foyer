@@ -1,8 +1,8 @@
 import { Invitation } from '../../models.mjs'
 
-export async function controller(req, res) {
+export async function controller(req, res, user) {
   res.status(200).send(await Invitation.aggregate([
-    { $match: { $or: [{ inviteeId: req.user._id }, { inviterId: req.user._id }] } },
+    { $match: { $or: [{ inviteeId: user._id }, { inviterId: user._id }] } },
     { $lookup: { as: 'homes',    from: 'homes', localField: 'homeId',    foreignField: '_id' } },
     { $lookup: { as: 'inviters', from: 'users', localField: 'inviterId', foreignField: '_id' } },
     { $lookup: { as: 'invitees', from: 'users', localField: 'inviteeId', foreignField: '_id' } },

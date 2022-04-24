@@ -52,7 +52,7 @@ function validate({ schemas }) {
 function run({ controller }) {
   return async(req, res, next) => {
     try {
-      await controller(req, res)
+      await controller(req, res, req.user)
       next()
     }
     catch(err) {

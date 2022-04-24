@@ -3,8 +3,7 @@ import E from 'http-errors'
 import V from '../../validations.mjs'
 import { Invitation, User } from '../../models.mjs'
 
-export async function controller(req, res) {
-  const user = req.user
+export async function controller(req, res, user) {
   const { _id: inviteeId } = user
   const invitation = await Invitation.findOne({ _id: req.params.id, inviteeId }).lean()
 

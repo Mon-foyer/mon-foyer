@@ -3,15 +3,15 @@ import E from 'http-errors'
 import V from '../../validations.mjs'
 import { Invitation } from '../../models.mjs'
 
-export async function controller(req, res) {
+export async function controller(req, res, user) {
   const doc = await Invitation.deleteOne(
-    { _id: req.params.id, $or: [{ inviterId: req.user._id }, { inviteeId: req.user._id }] }
+    { _id: req.params.id, $or: [{ inviterId: user._id }, { inviteeId: user._id }] }
   )
 
   if (doc.deletedCount !== 1)
     throw new E.NotFound()
 
-  return res.status(204).send()
+  res.status(204).send()
 }
 
 export const schemas = {

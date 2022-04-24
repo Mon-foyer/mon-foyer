@@ -1,8 +1,8 @@
 import { Home } from '../../models.mjs'
 
-export async function controller(req, res) {
+export async function controller(req, res, user) {
   const [home] = await Home.aggregate([
-    { $match: { _id: req.user.homeId } },
+    { $match: { _id: user.homeId } },
     { $lookup: { from: 'users', as: 'inhabitants', localField: '_id', foreignField: 'homeId' } },
     {
       $project: {

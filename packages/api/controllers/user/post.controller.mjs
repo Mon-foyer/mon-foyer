@@ -35,7 +35,7 @@ export async function controller(req, res) {
     password: `${salt}:${crypto.pbkdf2Sync(password, salt, 1000, 64, `sha512`).toString(`hex`)}`
   })
 
-  return res.location(`/user/${user._id}`).status(201).send()
+  res.location(`/user/${user._id}`).status(201).send()
 }
 
 export const schemas = {
