@@ -1,15 +1,17 @@
 import { expect } from 'chai'
 import G from '../../generators.mjs'
-import { Invitation, ObjectId, User } from '../../models.mjs'
+import { Home, Invitation, ObjectId, User } from '../../models.mjs'
 
 describe('DELETE /invitation/:id/accept', () => {
   after(() => G.empty())
 
   describe('Success', () => {
     it('Accepts an invitation and deletes other pendings invitations', async() => {
-      const [homeA, homeB] = await Promise.all([G.newHome(), G.newHome()])
+      const [homeA, homeB, homeC] = await Promise.all([G.newHome(), G.newHome(), G.newHome()])
       const [someone, inviter, invitee] = await Promise.all([
-        G.newUser({ homeId: homeB._id }), G.newUser({ homeId: homeA._id }), G.newUser()
+        G.newUser({ homeId: homeB._id }),
+        G.newUser({ homeId: homeA._id }),
+        G.newUser({ homeId: homeC._id })
       ])
 
       const [invitationA, invitationB] = await Promise.all([
@@ -26,6 +28,10 @@ describe('DELETE /invitation/:id/accept', () => {
         _id: { $in: [invitationA._id, invitationB._id] }
       })
       expect(nInvitations).eq(0)
+
+      // homeC is deleted because it has no habitant anymore
+      const deletedHome = await Home.findOne({ _id: homeC._id }).lean()
+      expect(deletedHome).null
     })
   })
 

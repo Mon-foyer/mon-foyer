@@ -21,6 +21,7 @@ export async function controller(req, res) {
     Invitation.deleteMany({ $or: [{ inviterId: invitee._id }, { inviteeId: invitee._id }] })
   ])
 
+  // When a home is not related to a user, it's deleted
   if (await User.countDocuments({ homeId: oldHomeId }) === 0)
     await Home.deleteOne({ _id: oldHomeId })
 
