@@ -24,7 +24,7 @@ export const Invitation = mongoose.model('Invitation', new Schema({
 }, defaultModelOptions))
 
 export const User = mongoose.model('User', new Schema({
-  homeId:   { type: ObjectId, default: null },
+  homeId:   { type: ObjectId, required: true },
   name:     { type: String, required: true },
   password: { type: String, required: true },
   token:    { type: String, default: null }

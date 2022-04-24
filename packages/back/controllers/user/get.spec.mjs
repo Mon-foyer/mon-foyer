@@ -28,10 +28,10 @@ describe('GET /user/:id', () => {
 
       await G.request(`get /user/${new ObjectId()}`, requester).expect(404)
     })
-    it('Returns 403 when the requester has no home and the target does not exists', async() => {
+    it('Returns 404 when the requester has no home and the target does not exists', async() => {
       const requester = await G.newUser()
 
-      await G.request(`get /user/${new ObjectId()}`, requester).expect(403)
+      await G.request(`get /user/${new ObjectId()}`, requester).expect(404)
     })
     it('Returns 404 when the user exists but is not part of the requester\'s home', async() => {
       const home = await G.newHome()

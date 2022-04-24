@@ -264,7 +264,7 @@
             "description": "The invitation could not be created because the target user is already part of a home Or Unable to create an invitation as you've already invited one person"
           },
           "422": {
-            "description": "* no_home: The requester has no home\n* invite_yourself: The requester invited itself\n* too_many_invitations: The requester already has a pending invitation",
+            "description": "* invite_yourself: The requester invited itself\n* too_many_invitations: The requester already has a pending invitation",
             "content": {
               "application/json": {
                 "schema": {
@@ -450,9 +450,6 @@
           },
           "401": {
             "$ref": "#/components/responses/Unauthorized"
-          },
-          "403": {
-            "$ref": "#/components/responses/Forbidden"
           },
           "404": {
             "$ref": "#/components/responses/NotFound"

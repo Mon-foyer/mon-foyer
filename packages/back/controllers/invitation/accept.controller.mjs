@@ -1,10 +1,11 @@
 import E from 'http-errors'
 
 import V from '../../validations.mjs'
-import { Invitation, User } from '../../models.mjs'
+import { Home, Invitation, User } from '../../models.mjs'
 
 export async function controller(req, res) {
   const invitee = req.user
+  const oldHomeId = req.user.homeId
   const invitation = await Invitation.findOne({ _id: req.params.id, inviteeId: invitee._id }).lean()
 
   if (!invitation)
@@ -19,6 +20,9 @@ export async function controller(req, res) {
     User.updateOne({ _id: invitee._id }, { homeId: inviter.homeId }),
     Invitation.deleteMany({ $or: [{ inviterId: invitee._id }, { inviteeId: invitee._id }] })
   ])
+
+  if (await User.countDocuments({ homeId: oldHomeId }) === 0)
+    await Home.deleteOne({ _id: oldHomeId })
 
   return res.status(204).send()
 }

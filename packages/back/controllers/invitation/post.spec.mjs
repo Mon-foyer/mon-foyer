@@ -22,14 +22,6 @@ describe('POST /invitation', () => {
   })
 
   describe('Failure', () => {
-    it('Returns 422 when the requester does not have a home', async() => {
-      const requester = await G.newUser()
-      const { body } = await G.request(`post /invitation/`, requester).send({ name: 'epfinge' })
-        .expect(422)
-
-      expect(body.error.message).eq('no_home')
-    })
-
     it('Returns 422 when the user already has a pending invitation', async() => {
       const home = await G.newHome()
       const [inviter, invitee] = await Promise.all([G.newUser({ homeId: home._id }), G.newUser()])

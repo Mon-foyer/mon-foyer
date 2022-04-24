@@ -11,6 +11,10 @@ import { dropDatabase, Home, Invitation, User } from './models.mjs'
 const chance = new Chance()
 const server = request(app)
 
+async function newHome(home = {}) {
+  return Home.create(Object.assign({ name: chance.name() }, home))
+}
+
 export default {
   // Empty the database
   empty: async() => dropDatabase(),
@@ -23,9 +27,7 @@ export default {
     return pendingRequest
   },
 
-  newHome: async(home = {}) => {
-    return Home.create(Object.assign({ name: chance.name() }, home))
-  },
+  newHome,
 
   newInvitation: async(invitation = {}) => {
     return Invitation.create(invitation)
@@ -40,6 +42,11 @@ export default {
     user.password = `${salt}:${crypto.pbkdf2Sync(user.password, salt, 1000, 64, `sha512`)
       .toString(`hex`)}`
     user.token = jwt.sign({ name: user.name }, process.env.MF_JWT_SECRET, { expiresIn: '10m' })
+
+    if (!user.homeId) {
+      const home = await newHome({ name: 'default_home' })
+      user.homeId = home._id
+    }
 
     return User.create(user)
   }

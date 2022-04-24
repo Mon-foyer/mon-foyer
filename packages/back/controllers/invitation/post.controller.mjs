@@ -7,8 +7,6 @@ export async function controller(req, res) {
   const inviter = req.user
   const { name } = req.body
 
-  if (!inviter.homeId)
-    throw new E.UnprocessableEntity('no_home')
   if (name === inviter.name)
     throw new E.UnprocessableEntity('invite_yourself')
 

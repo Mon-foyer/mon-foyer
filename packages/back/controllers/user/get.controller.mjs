@@ -10,9 +10,6 @@ export async function controller(req, res) {
   const _id = req.params.id
   const requester = req.user
 
-  if (!requester.homeId && _id !== requester._id.toString())
-    throw new E.Forbidden()
-
   const user = await User.findOne({ _id, homeId: requester.homeId }, userFields).lean()
 
   if (!user)
