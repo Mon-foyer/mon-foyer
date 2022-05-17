@@ -397,6 +397,41 @@
             }
           }
         }
+      },
+      "patch": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Updates logged user",
+        "description": "Updates logged user data OR allow a user to leave its home",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "leaveHome": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "When true, removes the user from its current home. **Other updates are ignored**."
+                  },
+                  "shownName": {
+                    "$ref": "#/components/schemas/ShownName"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Update success"
+          }
+        }
       }
     },
     "/user/{id}": {
@@ -405,7 +440,7 @@
           "User"
         ],
         "summary": "Gets a user",
-        "description": "Gets a user by its id",
+        "description": "Gets a user by its id. A user can only see itself and other members of its home",
         "security": [
           {
             "BearerAuth": []
@@ -432,41 +467,6 @@
           },
           "404": {
             "$ref": "#/components/responses/NotFound"
-          }
-        }
-      },
-      "patch": {
-        "tags": [
-          "User"
-        ],
-        "summary": "Updates a user",
-        "description": "Updates a user",
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/id"
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "properties": {
-                  "shownName": {
-                    "$ref": "#/components/schemas/ShownName"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "204": {
-            "description": "Update success"
           }
         }
       }
@@ -678,6 +678,7 @@
           "createdAt",
           "joinedAt",
           "name",
+          "shownName",
           "updatedAt"
         ]
       },
