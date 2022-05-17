@@ -24,11 +24,12 @@ export const Invitation = mongoose.model('Invitation', new Schema({
 }, defaultModelOptions))
 
 const UserSchema = new Schema({
-  homeId:   { type: ObjectId, required: true },
-  joinedAt: { type: Date, default: () => new Date(), required: false },
-  name:     { type: String, required: true },
-  password: { type: String, required: true },
-  token:    { type: String, default: null }
+  homeId:    { type: ObjectId, required: true },
+  joinedAt:  { type: Date, default: () => new Date(), required: false },
+  name:      { type: String, required: true },
+  password:  { type: String, required: true },
+  shownName: { type: String, default: null },
+  token:     { type: String, default: null }
 }, defaultModelOptions)
 
 UserSchema.methods = {

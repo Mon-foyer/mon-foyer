@@ -3,6 +3,7 @@ import JoiObjectId from 'joi-objectid'
 Joi.objectId = JoiObjectId(Joi)
 
 export default {
+  boolean: Joi.boolean(),
   object: keys => Joi.object(keys),
 
   id: Joi.objectId(),

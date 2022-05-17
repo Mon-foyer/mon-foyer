@@ -12,6 +12,7 @@ import * as invitationDelete from './controllers/invitation/delete.controller.mj
 import * as invitationGet    from './controllers/invitation/get.controller.mjs'
 import * as invitationPost   from './controllers/invitation/post.controller.mjs'
 import * as userGet          from './controllers/user/get.controller.mjs'
+import * as userPatch        from './controllers/user/patch.controller.mjs'
 import * as userPost         from './controllers/user/post.controller.mjs'
 
 passport.use(
@@ -69,6 +70,7 @@ export default express.Router()
   .delete('/invitation/:id',        bearerAuth, validate(invitationDelete), run(invitationDelete))
   .delete('/invitation/:id/accept', bearerAuth, validate(invitationAccept), run(invitationAccept))
   .get('/invitation',               bearerAuth,                             run(invitationGet))
+  .patch('/user',                   bearerAuth, validate(userPatch),        run(userPatch) )
   .post('/user',                                validate(userPost),         run(userPost) )
   .get('/user/:id',                 bearerAuth, validate(userGet),          run(userGet))
   .use('*', (req, res, next) => next(new E.NotFound()))

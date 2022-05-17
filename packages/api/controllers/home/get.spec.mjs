@@ -19,12 +19,14 @@ describe('GET /home', () => {
       expect(body.inhabitants).eql([{
         _id: inhabitant1._id.toString(),
         name: inhabitant1.name,
+        shownName: null,
         createdAt: inhabitant1.createdAt.toISOString(),
         joinedAt: inhabitant1.joinedAt.toISOString(),
         updatedAt: inhabitant1.updatedAt.toISOString()
       }, {
         _id: inhabitant2._id.toString(),
         name: inhabitant2.name,
+        shownName: null,
         createdAt: inhabitant2.createdAt.toISOString(),
         joinedAt: inhabitant2.joinedAt.toISOString(),
         updatedAt: inhabitant2.updatedAt.toISOString()

@@ -434,6 +434,41 @@
             "$ref": "#/components/responses/NotFound"
           }
         }
+      },
+      "patch": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Updates a user",
+        "description": "Updates a user",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "shownName": {
+                    "$ref": "#/components/schemas/ShownName"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Update success"
+          }
+        }
       }
     }
   },
@@ -594,6 +629,11 @@
         "type": "string",
         "description": "Encrypted password"
       },
+      "ShownName": {
+        "type": "string",
+        "description": "Name to display instead of the username",
+        "default": null
+      },
       "UpdatedAt": {
         "type": "string",
         "format": "date",
@@ -621,6 +661,9 @@
           },
           "password": {
             "$ref": "#/components/schemas/Password"
+          },
+          "shownName": {
+            "$ref": "#/components/schemas/ShownName"
           },
           "token": {
             "type": "string",
